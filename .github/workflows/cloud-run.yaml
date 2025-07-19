@@ -115,7 +115,7 @@ jobs:
 
 
     # Setup Google CLI
-    - uses: google-github-actions/setup-gcloud@v2.15
+    - uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: '${{ secrets.PROJECT_ID }}'
         service_account_key: '${{ secrets.RUN_SA_KEY }}'
