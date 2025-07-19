@@ -95,17 +95,18 @@ env:
   SERVICE_NAME: ml-api
   BASIC_AUTH_USERNAME: ${{secrets.BASIC_AUTH_USERNAME}} 
   BASIC_AUTH_PASSWORD: ${{secrets.BASIC_AUTH_PASSWORD}}
-  CLOUDSDK_PYTHON: /usr/bin/python3.9
-
-
+  
 jobs:
   setup-build-deploy:
     name: Setup, Build and Deploy
     runs-on: ubuntu-latest
+    env:
+      # Inicialmente define CLOUDSDK_PYTHON como python3 (vai ser atualizado no passo abaixo)
+      CLOUDSDK_PYTHON: /usr/bin/python3
 
     steps:
     - name: 'Checkout'
-      uses: 'actions/checkout@v2'
+      uses: 'actions/checkout@v3'
 
     # Para evitar problemas de compatibilidade, é necessário definir a versão do Python
     - name: Set up Python 3.9
@@ -113,12 +114,15 @@ jobs:
       with:
         python-version: '3.9'
 
+    - name: Ensure gcloud uses correct Python
+      run: echo "CLOUDSDK_PYTHON=$(which python3)" >> $GITHUB_ENV
 
     # Setup Google CLI
     - uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: '${{ secrets.PROJECT_ID }}'
         service_account_key: '${{ secrets.RUN_SA_KEY }}'
+        export_default_credentials: true
         version: 'latest'
     
     # Build and push the Docker image to Google Container Registry
