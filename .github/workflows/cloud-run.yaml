@@ -91,12 +91,11 @@ on:
 
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}}
-  # GAR_LOCATION: us-central1
   REGION: us-central1
-  # APP: app
   SERVICE_NAME: ml-api
-  ENV BASIC_AUTH_USERNAME: ${{secrets.BASIC_AUTH_USERNAME}} 
-  ENV BASIC_AUTH_PASSWORD: ${{secrets.BASIC_AUTH_PASSWORD}}
+  BASIC_AUTH_USERNAME: ${{secrets.BASIC_AUTH_USERNAME}} 
+  BASIC_AUTH_PASSWORD: ${{secrets.BASIC_AUTH_PASSWORD}}
+  CLOUDSDK_PYTHON: /usr/bin/python3.9
 
 
 jobs:
@@ -108,10 +107,14 @@ jobs:
     - name: 'Checkout'
       uses: 'actions/checkout@v2'
 
-    #############################################################################
+    # Para evitar problemas de compatibilidade, é necessário definir a versão do Python
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+
     # Setup Google CLI
-    # - uses: 'google-github-actions/get-gcloud-auth-credentials@v0'
-    # - uses: 'GoogleCloudPlatform/github-actions/setup-gcloud@master'
     - uses: google-github-actions/setup-gcloud@v2.15
       with:
         project_id: '${{ secrets.PROJECT_ID }}'
@@ -135,56 +138,5 @@ jobs:
           --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
           --platform managed \
           --allow-unauthenticated \
-          --port: 5000
-    #############################################################################
-
-      # - name: 'Google auth'
-      #   id: 'auth'
-      #   uses: 'google-github-actions/auth@v1'
-      #   with:
-      #     workload_identity_provider: '${{ vars.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
-      #     service_account: '${{ vars.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
-
-      # - name: 'Set up Cloud SDK'
-      #   uses: 'google-github-actions/setup-gcloud@v1'
-      #   with:
-      #     project_id: '${{ env.PROJECT_ID }}'
-
-      # - name: 'Docker auth'
-      #   run: |-
-      #     gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev
-
-      # - name: 'Build and push container'
-      #   run: |-
-      #     docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}" .
-      #     docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}"
-
-      # - name: 'Render templatised config manifests'
-      #   run: |-
-      #     export PROJECT_ID="${{ env.PROJECT_ID }}"
-      #     export REGION="${{ env.REGION }}"
-      #     for template in $(ls config/*.template.yaml); do envsubst < ${template} > ${template%%.*}.yaml ; done
-
-      # - name: 'Create Cloud Deploy delivery pipeline'
-      #   run: |-
-      #     gcloud deploy apply --file config/clouddeploy.yaml --region ${{ env.GAR_LOCATION }}
-
-      # - name: 'Create release name'
-      #   run: |-
-      #     echo "RELEASE_NAME=${{ env.APP }}-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}" >> ${GITHUB_ENV}
-
-      # - name: 'Create Cloud Deploy release'
-      #   id: 'release'
-      #   uses: 'google-github-actions/create-cloud-deploy-release@v0'
-      #   with:
-      #     delivery_pipeline: '${{ env.APP }}'
-      #     name: '${{ env.RELEASE_NAME }}'
-      #     region: '${{ env.REGION }}'
-      #     description: '${{ env.GITHUB_COMMIT_MSG }}'
-      #     skaffold_file: 'config/skaffold.yaml'
-      #     images: 'app=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}'
-
-      # - name: 'Report Cloud Deploy release'
-      #   run: |-
-      #     echo "Created release ${{ steps.release.outputs.name }} "
-      #     echo "Release link ${{ steps.release.outputs.link }} "
+          --port=5000
+   
