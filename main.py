@@ -36,7 +36,8 @@ def cotacao():
     preco = lr.predict([dados_input])[0]
     return jsonify({'preco': preco})
 
-
-port = int(os.environ.get('PORT', 5000))
-app.run(host='0.0.0.0', port=port)
-# app.run(debug=True, host='0.0.0.0')
+# Run the app with debug mode and accessible from any host
+# This is useful for local development
+# In production, you would typically use a WSGI server like Gunicorn
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
