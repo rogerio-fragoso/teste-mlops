@@ -112,11 +112,11 @@ jobs:
     # Setup Google CLI
     # - uses: 'google-github-actions/get-gcloud-auth-credentials@v0'
     # - uses: 'GoogleCloudPlatform/github-actions/setup-gcloud@master'
-    - uses: google-github-actions/setup-gcloud@v0
+    - uses: google-github-actions/setup-gcloud@v3
       with:
         project_id: '${{ secrets.PROJECT_ID }}'
         service_account_key: '${{ secrets.RUN_SA_KEY }}'
-        version: '290.0.1'
+        version: 'latest'
     
     # Build and push the Docker image to Google Container Registry
     - name: build
