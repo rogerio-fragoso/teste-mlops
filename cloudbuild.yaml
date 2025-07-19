@@ -1,8 +1,20 @@
+# steps:
+#   - name: gcr.io/cloud-builders/docker
+#     # entrypoint: gcloud
+#     args: ['build', 'build-arg', 'BASIC_AUTH_USERNAME_ARG=${_BASIC_AUTH_USERNAME}', 'BASIC_AUTH_PASSWORD_ARG=${_BASIC_AUTH_PASSWORD}', '-t', '$_IMAGE_TAG', '.']
+
 steps:
   - name: gcr.io/cloud-builders/docker
-    # entrypoint: gcloud
-    args: ['build', 'build-arg', 'BASIC_AUTH_USERNAME_ARG=${_BASIC_AUTH_USERNAME}', 'BASIC_AUTH_PASSWORD_ARG=${_BASIC_AUTH_PASSWORD}', '-t', '$_IMAGE_TAG', '.']
-  
+    args:
+      - build
+      - --build-arg
+      - BASIC_AUTH_USERNAME_ARG=${_BASIC_AUTH_USERNAME}
+      - --build-arg
+      - BASIC_AUTH_PASSWORD_ARG=${_BASIC_AUTH_PASSWORD}
+      - -t
+      - $_IMAGE_TAG
+      - .
+
 images:
   - $_IMAGE_TAG
       
