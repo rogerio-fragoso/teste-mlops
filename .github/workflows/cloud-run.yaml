@@ -117,6 +117,12 @@ jobs:
     - name: Ensure gcloud uses correct Python
       run: echo "CLOUDSDK_PYTHON=$(which python3)" >> $GITHUB_ENV
 
+    # Important: configure authentication with your Google Cloud credentials
+    - id: 'auth'
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.RUN_SA_KEY }}'  # nome do seu segredo do JSON da SA
+
     # Setup Google CLI
     - uses: google-github-actions/setup-gcloud@v2
       with:
